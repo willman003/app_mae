@@ -1,0 +1,40 @@
+{%extends 'layout/master_manage.html'%}
+{%block content%}
+<div class="container" style="margin: 20px auto;">
+    <form method="POST">
+        {{form.hidden_tag()}}
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <h3>Tên sản phẩm:</h3>
+            </div>
+            <div class="form-group col-md-8">
+                <h4><b>{{san_pham.ten_san_pham}}</b></h4>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                Số lượng hiện tại trong kho:
+            </div>
+            <div class="form-group col-md-8">
+                {{san_pham.so_luong_ton}}
+            </div>
+
+        </div>
+        <div class="form-row">
+            <label class="form-group col-md-4" for="so_luong_nhap">Nhập thêm:</label>
+            {{form.so_luong_nhap(class="form-group col-md-8")}}
+        </div>
+        {%if chuoi_thong_bao != ''%}
+        <div class="form-row text-center">
+            <div class="form-group col-md-12">
+                <div class="alert alert-success" role="alert">
+                    {{chuoi_thong_bao}}
+                </div>
+            </div>
+        </div>
+        {%endif%}
+    </form>
+
+
+</div>
+{%endblock%}

@@ -1,0 +1,48 @@
+{%extends 'layout/master_manage.html'%}
+{%block content%}
+<form class="container form-inline" method="POST">
+    {{form.hidden_tag()}}
+    <div class="form-group row">
+        <div class="col-md-8">
+            {{form.noi_dung(class="form-control",placeholder="Nhập Tên sản phẩm hoặc Mã sản phẩm")}}
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-info" type="submit">Tìm kiếm</button>
+        </div>
+    </div>
+</form>
+
+
+<div class="container" style="margin: 20px auto;">
+    <!-- <div class="row">
+        <div class="col-md-12 text-center">
+            <h3>{{tieu_de}}</h3>
+        </div>
+    </div> -->
+    <div class="row">
+        <table class="table" style="margin: 40px auto;">
+            <thead class="thead-dark">
+
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Mã sản phẩm</th>
+                    <th scope="col">Tên sản phẩm</th>
+                    <th scop="col">Số lượng trong kho</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {%for item in san_pham%}
+                <tr>
+                    <th scope="row">{{loop.index}}</th>
+                    <td>{{item.ma_san_pham}}</td>
+                    <td>{{item.ten_san_pham}}</td>
+                    <td>{{item.so_luong_ton}}</td>                    
+
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>
+{%endblock%}

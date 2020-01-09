@@ -1,0 +1,32 @@
+{%extends 'layout/master_manage.html'%}
+{%block content%}
+<div class="container">
+    <div class="row">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">STT</th>
+                <th scope="col">Mã đơn hàng</th>
+                <th scope="col">Lúc</th>
+                <th scope="col">Đến</th>
+                <th scope="col">Hình thức vận chuyển</th>
+                <th scope="col">Tổng tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%for item in ds_chi_tiet_order%}
+              <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td><a href={{"/QL-don-hang/hd_"+item['salesOrder']['orderNumber']}}>{{item['salesOrder']['orderNumber']}}</a></td>
+                <td>{{item['salesOrder']['orderDate']}}</td>
+                <td>{{item['salesOrder']['receiverFullAddress']}}</td>
+                <td>{{item['salesOrder_info_detail']['carrierName']}}</td>
+                <td>{{"{:,}".format(item['salesOrder']['totalAmount'])}}</td>
+                
+              </tr>
+            {%endfor%}
+            </tbody>
+          </table>
+    </div>
+</div>
+{%endblock%}

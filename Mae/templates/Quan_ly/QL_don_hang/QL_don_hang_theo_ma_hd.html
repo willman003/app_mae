@@ -1,0 +1,53 @@
+{%extends 'layout/master_manage.html'%}
+{%block content%}
+<form class="container form-inline" method="POST">
+    {{form.hidden_tag()}}
+    <div class="form-group row">
+        <div class="col-md-8">
+            {{form.ma_hoa_don_tim_kiem(class="form-control",placeholder="Nhập mã hóa đơn")}}
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-info" type="submit">Xem</button>
+        </div>
+    </div>
+</form>
+
+
+<div class="container" style="margin: 20px auto;">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h3>{{tieu_de}}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table" style="margin: 40px auto;">
+            <thead class="thead-dark">
+
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Mã hoá đơn</th>
+                    <th scope="col">Ngày</th>
+                    <th scope="col">Tổng tiền</th>
+                    <th scope="col">Địa chỉ giao hàng</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for item in hoa_don%}
+                <tr>
+                    <th scope="row">{{loop.index}}</th>
+                    <td>{{item.ma_hoa_don}}</td>
+                    <td>{{item.ngay_tao_hoa_don}}</td>
+                    <td>{{"{:,}".format(item.tong_tien|int)}}</td>
+                    <td>{{item.dia_chi_giao_hang}}</td>
+                    <td>{%if item.trang_thai == 1%}  Đã thanh toán  {%elif item.trang_thai == 2%} Hủy {%else%} Chưa thanh toán {%endif%}</td>
+                    <td><small><a href = "/QL-don-hang/hoa-don/hd_{{item.ma_hoa_don}}"> Chi tiết hóa đơn</a></small></td>
+
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+</div>
+{%endblock%}
