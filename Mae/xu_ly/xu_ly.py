@@ -1,6 +1,6 @@
 import requests
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 client_key = '62bee939365a425b93c13bca9882041c'
 
@@ -19,8 +19,11 @@ def Lay_token_xac_thuc(client_key=client_key):
 
 def Lay_danh_sach_order():
     ngay=datetime.now().date()
+
     today = str(ngay.year) + "/" + str(ngay.month) + "/" + str(ngay.day)
-    url = "http://sapi.sendo.vn/shop/salesOrder/Merchant?frDate="+today+"&ttDate="+today+"&offset=0&limit=50"
+    ten_days_ago = ngay - timedelta(days=10)
+    from_date = str(ten_days_ago.year) + "/" + str(ten_days_ago.month) + "/" + str(ten_days_ago.day)
+    url = "http://sapi.sendo.vn/shop/salesOrder/Merchant?frDate="+from_date+"&ttDate="+today+"&offset=0&limit=50"
     
     payload = {}
     headers = {

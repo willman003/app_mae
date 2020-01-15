@@ -1,7 +1,7 @@
 {%extends 'layout/master_manage.html'%}
 {%block title%} Hóa đơn {{chi_tiet_order['orderNumber']}} {%endblock%}
 {%block content%}
-    
+{%if chi_tiet_order['orderStatus'] == 2%}
 <div class="container-fluid" style="margin: 20px auto;">
     <div class="row">
         <div class="col-md-12 text-center">
@@ -35,8 +35,115 @@
             <h4>Mã vận đơn: {{chi_tiet_order['trackingNumber']}}</h4>
 
         </div>
+        {%if chi_tiet_order['orderStatus'] == 13%}
+        <div class="col-md-12 text-right" style="color:red;">
+            Trạng thái: Huỷ
+            
+            <p>
+                Lí do huỷ: {{chi_tiet_order['reasonCancel']}}
+            </p>
+        </div>
+        {%endif%}
         <div class="col-md-12 text-right">
-            Nhà vận chuyển: {{chi_tiet_order['carrierName']}}
+            Nhà vận chuyển: <b>{{chi_tiet_order['carrierName']}}</b>
+        </div>
+        <div class="col-md-12 text-right">
+            Phí vận chuyển: {{chi_tiet_order['shippingFee']}}
+        </div>
+       
+        
+    </div>
+    <div class="row">
+        <table class="table text-center">
+            <thead class="thead-dark">
+
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Mã sản phẩm</th>
+                    <th scope="col">Tên sản phẩm</th>
+                    <th scop="col">Trọng lượng</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Giá bán</th>
+                    <th scope="col">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for item in don_hang%}
+                <tr>
+                    <th scope="row">{{loop.index}}</th>
+                    <td>{{item['productVariantId']}}</td>
+                    <td>{{item['productName']}}</td>
+                    <td>{{item['weight']}}</td>
+                    <td>{{item['quantity']}}</td>
+                    <td>{{item['price']}}</td>
+                    <td>{{"{:,}".format(item['subTotal'])}}</td>
+                    
+                    
+                </tr>
+                {%endfor%}
+                
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <b>Tổng cộng: {{"{:,}".format(tong_tien)}} VNĐ </b>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <a class="btn btn-sucess" href="{{url_for('in_hoa_don, hd_id = chi_tiet_order[orderNumber]')}}">In hoá đơn</a>
+        </div>
+        
+    </div>
+    
+</div>
+
+{%else%}
+<div class="container-fluid" style="margin: 20px auto;">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h3>Thông tin hóa đơn #{{chi_tiet_order['orderNumber']}}</h3>
+        </div>
+    </div>
+    <div class="row text-left">
+        <div class="col-md-12">
+            Ngày tạo hóa đơn: <b>{{chi_tiet_order['orderDate']}}</b>
+        </div>
+        <div class="col-md-12">
+            Tên khách hàng: <b>{{chi_tiet_order['receiverName']}}</b>
+        </div>
+        <div class="col-md-12">
+            Địa chỉ giao hàng: <b>{{chi_tiet_order['regionName']}}</b>
+        </div>
+        <div class="col-md-12">
+            Số điện thoại liên lạc: <b>{{chi_tiet_order['buyerPhone']}}</b>
+        </div>
+        <div class="col-md-12">
+            Ghi chú của khách: {{chi_tiet_order['note']}}
+        </div>
+        
+        
+    </div>
+    <div class="row" style="margin: 40px auto;">
+        <div class="col-md-12 text-center">
+            <h3>Thông tin đơn hàng</h3>
+        </div>
+        <div class="col-md-12 text-left">
+            <h4>Mã vận đơn: {{chi_tiet_order['trackingNumber']}}</h4>
+
+        </div>
+        {%if chi_tiet_order['orderStatus'] == 13%}
+        <div class="col-md-12 text-right" style="color:red;">
+            Trạng thái: Huỷ
+            
+            <p>
+                Lí do huỷ: {{chi_tiet_order['reasonCancel']}}
+            </p>
+        </div>
+        {%endif%}
+        <div class="col-md-12 text-right">
+            Nhà vận chuyển: <b>{{chi_tiet_order['carrierName']}}</b>
         </div>
         <div class="col-md-12 text-right">
             Phí vận chuyển: {{chi_tiet_order['shippingFee']}}
@@ -83,4 +190,5 @@
     </div>
     
 </div>
+{%endif%}
 {%endblock%}

@@ -79,9 +79,14 @@ class Form_QL_don_hang(FlaskForm):
 
 class Form_tim_kiem(FlaskForm):
     noi_dung = fields.StringField()
-    
+
+class Form_tim_kiem_nhap_hang(FlaskForm):
+    noi_dung = fields.StringField()
+    submit = fields.SubmitField('Tìm kiếm')
+
 class Form_nhap_hang(FlaskForm):
     so_luong_nhap = fields.IntegerField(widget=NumberInput())
+    
 
 class Form_y_kien(FlaskForm):
     ma_khach_hang = fields.IntegerField('Mã khách hàng')

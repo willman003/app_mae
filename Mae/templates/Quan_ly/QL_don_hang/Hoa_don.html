@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Hoá đơn {{hd_id}}</title>
+  </head>
+  <body>
+    <div class="container" style="margin: 0 0; padding: 10px 5px; width: 148mm; height: 210mm; border: 2px solid black;">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{url_for('static', filename = 'images/logo.png')}}" style="position: relative; left: 10mm; padding-bottom: 5px; border-bottom: 1px dashed black;" width="100%">
+                
+                <span style="position: relative; left: 10mm;"><b>MAE COSMETICS</b></span>
+                
+            </div>
+            <div class="col-md-8 text-center" style="font-size: large; margin-top:5mm;">
+                Mã vận đơn: <b>{{chi_tiet_order['trackingNumber']}}</b>
+            </div>
+        </div>
+        <div style="border-bottom: 1px solid black;"></div>
+        <div class="row" style="font-size: 12pt;">
+            <div class="col-md-12">
+                Từ: <b>Mae Cosmetics - 0906.813.557</b>
+                <p>21 đường DD8, Phường Tân Hưng Thuận, Quận 12, Hồ Chí Minh</p>
+            </div>
+        </div>
+        <div style="border-bottom: 1px dashed black;"></div>
+        <div class="row" style="font-size: 12pt;">
+            <div class="col-md-12">
+                Đến: <b>{{chi_tiet_order['receiverName']}} - {{chi_tiet_order['shippingContactPhone']}}</b>
+                <p>{{chi_tiet_order['regionName']}}</p>
+            </div>
+        </div>
+        <div style="border-bottom: 1px dashed black;"></div>
+        <div class="row" style="font-size: 12pt;">
+            <div class="col-md-12">
+                <b>Tổng sản phẩm: {{don_hang|length}}</b>
+            </div>
+            {%for item in don_hang%}
+            <div class="col-md-12">
+                {{loop.index}} - {{item['productName']|title}} - SL:{{item['quantity']}} 
+            </div>
+            
+            {%endfor%}
+        </div>
+        <div style="border-bottom: 1px dashed black;"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <b>Ghi chú </b>: {{chi_tiet_order['note']}}
+            </div>
+        </div>
+        <div style="border-bottom: 1px dashed black;"></div>
+        <div class="row" style="padding-top: 10px;">
+            <div class="col-md-6 text-center">
+                <b>TIỀN THU NGƯỜI NHẬN</b>
+                <p>{{"{:,}".format(tong_tien)}} VND</p>
+            </div>
+            <div class="col-md-5 text-center" style="height: 50mm; border: 1px solid grey;">
+                Nhân viên lấy hàng
+                <p><small>Kí và ghi rõ họ tên</small></p>
+            </div>
+        </div>
+        
+
+
+
+    </div>
+    
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
