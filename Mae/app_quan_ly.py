@@ -44,7 +44,7 @@ class admin_view(ModelView):
 def index():
     if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
         return redirect(url_for('log_in', next=request.url))
-    dia_chi_frame = ''
+    dia_chi_frame = url_for('cap_nhat_tu_API')
     if request.form.get('Th_Ma_so'):
         man_hinh = request.form.get('Th_Ma_so')
         if man_hinh == "QL_Don_hang":
@@ -58,6 +58,16 @@ def index():
         
     return render_template('Quan_ly/MH_Chinh.html', dia_chi_frame = dia_chi_frame)
 
+@app.route('/cap-nhat-don-hang',methods=['GET','POST'])
+def cap_nhat_tu_API():
+    thong_bao = ''
+    if request.method == 'POST':
+        for item in Lay_danh_sach_order():
+            order = Lay_thong_tin_chi_tiet_order(item['salesOrder']['orderNumber'])
+            cap_nhat_hoa_don_database(order)
+        thong_bao = "Cập nhật hoàn tất lúc %s" % datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+    return render_template('Quan_ly/QL_don_hang/Cap_nhat_don_hang.html', thong_bao = thong_bao)
+
 @app.route('/QL-don-hang', methods =['GET','POST'])
 def ql_don_hang():
     if not current_user.is_authenticated or current_user.ma_loai_nguoi_dung != 1:
@@ -65,8 +75,8 @@ def ql_don_hang():
     dia_chi = ''
     if request.form.get('Th_hoa_don'):
         dieu_khien = request.form.get('Th_hoa_don')
-        if dieu_khien == 'Moi':
-            dia_chi = '/QL-don-hang/moi'
+        if dieu_khien == 'ChoLayHang':
+            dia_chi = url_for('ql_don_hang_waiting')
         elif dieu_khien == 'DangVanChuyen':
             dia_chi = url_for('ql_don_hang_dang_van_chuyen')
         elif dieu_khien == 'Huy':
@@ -76,24 +86,11 @@ def ql_don_hang():
         
     return render_template('Quan_ly/MH_QL_don_hang.html', dia_chi = dia_chi)
 
-@app.route("/QL-don-hang/moi", methods = ['GET','POST'])
-def ql_don_hang_moi():
-    danh_sach_order = Lay_danh_sach_order()
-    ds_order_moi = []
-    for item in danh_sach_order:
-        order = item['salesOrder']
-        if order['orderStatus'] == 2:
-            ds_order_moi.append(item)
-    ds_chi_tiet_order = []
-    for item in ds_order_moi:
-        order = item['salesOrder']
-        chi_tiet_order = Lay_thong_tin_chi_tiet_order(order['orderNumber'])
-        dict_temp = {}
-        dict_temp['salesOrder'] = order
-        dict_temp['salesOrder_info_detail'] = chi_tiet_order['salesOrder']
-        dict_temp['salesOrderDetails'] = chi_tiet_order['salesOrderDetails']
-        ds_chi_tiet_order.append(dict_temp)
-    return render_template('/Quan_ly/QL_don_hang/QL_don_hang_all.html', ds_chi_tiet_order = ds_chi_tiet_order)
+@app.route("/QL-don-hang/cho-lay-hang", methods = ['GET','POST'])
+def ql_don_hang_waiting():
+    hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_van_don == None).all()
+    
+    return render_template('Quan_ly/QL_don_hang/QL_don_hang_all.html', hoa_don = hoa_don)
 
 @app.route("/QL-don-hang/dang-van-chuyen", methods = ['GET','POST'])
 def ql_don_hang_dang_van_chuyen():
@@ -101,8 +98,10 @@ def ql_don_hang_dang_van_chuyen():
     ds_order_moi = []
     for item in danh_sach_order:
         order = item['salesOrder']
+        
         if order['orderStatus'] == 6:
             ds_order_moi.append(item)
+    
     ds_chi_tiet_order = []
     for item in ds_order_moi:
         order = item['salesOrder']
@@ -151,6 +150,7 @@ def ql_don_hang_theo_ma():
 @app.route('/QL-don-hang/hd_<int:hd_id>', methods =['GET','POST'])
 def chi_tiet_order(hd_id):
     order = Lay_thong_tin_chi_tiet_order(str(hd_id))
+    
     chi_tiet_order = order['salesOrder']
     don_hang = order['salesOrderDetails']
     tong_tien = 0

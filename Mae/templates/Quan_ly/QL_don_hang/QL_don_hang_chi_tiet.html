@@ -1,7 +1,7 @@
 {%extends 'layout/master_manage.html'%}
 {%block title%} Hóa đơn {{chi_tiet_order['orderNumber']}} {%endblock%}
 {%block content%}
-{%if chi_tiet_order['orderStatus'] == 2%}
+{%if chi_tiet_order['orderStatus'] == 3 or chi_tiet_order['orderStatus'] == 6%}
 <div class="container-fluid" style="margin: 20px auto;">
     <div class="row">
         <div class="col-md-12 text-center">
@@ -13,7 +13,7 @@
             Ngày tạo hóa đơn: <b>{{chi_tiet_order['orderDate']}}</b>
         </div>
         <div class="col-md-12">
-            Tên khách hàng: <b>{{chi_tiet_order['receiverName']}}</b>
+            Tên khách hàng: <b>{{chi_tiet_order['receiverName']|title}}</b>
         </div>
         <div class="col-md-12">
             Địa chỉ giao hàng: <b>{{chi_tiet_order['regionName']}}</b>
@@ -34,6 +34,9 @@
         <div class="col-md-12 text-left">
             <h4>Mã vận đơn: {{chi_tiet_order['trackingNumber']}}</h4>
 
+        </div>
+        <div class="col-md-12">
+            
         </div>
         {%if chi_tiet_order['orderStatus'] == 13%}
         <div class="col-md-12 text-right" style="color:red;">
@@ -92,7 +95,10 @@
     </div>
     <div class="row">
         <div class="col-md-12 text-center">
-            <a class="btn btn-sucess" href="{{url_for('in_hoa_don, hd_id = chi_tiet_order[orderNumber]')}}">In hoá đơn</a>
+            <button class ="btn btn-success">
+                <a href="{{url_for('in_hoa_don', hd_id = chi_tiet_order['orderNumber'])}}" target="_blank" style="color:white;">In hoá đơn</a>
+            </button>
+            
         </div>
         
     </div>
@@ -131,7 +137,7 @@
         </div>
         <div class="col-md-12 text-left">
             <h4>Mã vận đơn: {{chi_tiet_order['trackingNumber']}}</h4>
-
+            
         </div>
         {%if chi_tiet_order['orderStatus'] == 13%}
         <div class="col-md-12 text-right" style="color:red;">

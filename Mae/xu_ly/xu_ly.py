@@ -2,6 +2,20 @@ import requests
 import json
 from datetime import datetime, timedelta
 
+from sqlalchemy.orm import sessionmaker, configure_mappers
+from sqlalchemy import exc,asc,desc
+from flask_sqlalchemy import Pagination
+
+from flask_sqlalchemy import BaseQuery
+
+from Mae.xu_ly.xu_ly_model import *
+
+
+configure_mappers()
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind = engine)
+dbSession = DBSession()
+
 client_key = '62bee939365a425b93c13bca9882041c'
 
 def Lay_token_xac_thuc(client_key=client_key):
@@ -49,6 +63,77 @@ def Lay_thong_tin_chi_tiet_order(order_number):
     response = requests.request("GET", url, headers=headers, data = payload)
     result = json.loads(response.text)
     return result['result']
+
+def tao_san_pham_moi(name, gia_ban, gia_nhap, id_sendo):
+    sp = San_pham()
+    sp.ten_san_pham = name
+    sp.gia_ban = gia_ban
+    sp.gia_nhap = gia_nhap
+    sp.id_sendo = id_sendo
+    dbSession.add(sp)
+    dbSession.commit()
+    return sp.get_id()
+
+def tao_khach_hang_moi(order):
+    khach_hang = Khach_hang()
+    khach_hang.ten_khach_hang = order['salesOrder']['receiverName'].lower()
+    khach_hang.email = order['salesOrder']['receiverEmail']
+    khach_hang.dia_chi = order['salesOrder']['regionName']
+    khach_hang.dien_thoai = order['salesOrder']['buyerPhone']
+    dbSession.add(khach_hang)
+    dbSession.commit()
+    return khach_hang.get_id()
+
+def tao_don_hang_moi(ma_hd, item):
+    sp = dbSession.query(San_pham).filter(San_pham.id_sendo == item['productVariantId']).first()
+    if sp == None:
+        ma_sp_moi = tao_san_pham_moi(item['productName'],item['price'],0,item['productVariantId'])
+        sp = dbSession.query(San_pham).filter(San_pham.ma_san_pham == ma_sp_moi).first()
+    don_hang = Don_hang()
+    don_hang.ma_hoa_don = ma_hd
+    don_hang.ma_san_pham = sp.ma_san_pham
+    don_hang.ten_san_pham = sp.ten_san_pham
+    don_hang.so_luong = item['quantity']
+    don_hang.don_gia = sp.gia_ban
+    don_hang.ghi_chu = item['description']
+    dbSession.add(don_hang)
+    dbSession.commit()
+    return
+
+def tao_hoa_don_moi(order_number):
+    order = Lay_thong_tin_chi_tiet_order(order_number)
+    hoa_don = Hoa_don()
+    hoa_don.ngay_tao_hoa_don = datetime.strptime(order['salesOrder']['orderDate'],"%Y-%m-%d %H:%M:%S")
+    #Create new customer
+    khach_hang_cu = dbSession.query(Khach_hang).filter(Khach_hang.ten_khach_hang == order['salesOrder']['receiverName'].lower()).first()
+    if khach_hang_cu == None:
+        hoa_don.ma_khach_hang = tao_khach_hang_moi(order)
+    hoa_don.ma_khach_hang = khach_hang_cu.ma_khach_hang
+    hoa_don.tong_tien = order['salesOrder']['totalAmount']
+    hoa_don.ma_hoa_don_sendo = order['salesOrder']['orderNumber']
+    hoa_don.ma_van_don = order['salesOrder']['trackingNumber']
+    hoa_don.trang_thai = order['salesOrder']['orderStatus']
+    hoa_don.ghi_chu = order['salesOrder']['note']
+    dbSession.add(hoa_don)
+    dbSession.commit()
+    #Create order_detail
+    for item in order['salesOrderDetails']:
+        tao_don_hang_moi(hoa_don.get_id(),item)
+    return 
+   
+
+def cap_nhat_hoa_don_database(chi_tiet_order):
+    
+    order = chi_tiet_order['salesOrder']
+    hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don_sendo == order['orderNumber']).first()
+    if hoa_don == None:
+        tao_hoa_don_moi(order['orderNumber'])
+    else:
+        hoa_don.trang_thai = order['orderStatus']
+        dbSession.add(hoa_don)
+        dbSession.commit()
+    return  
+   
 
 
 

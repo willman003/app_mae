@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+
 # from Mae import app, db
 
 
@@ -37,6 +38,11 @@ class San_pham(Base):
     def __str__(self):
         return self.ten_san_pham
 
+    def get_id(self):
+        return self.ma_san_pham
+
+    
+    
 class Loai_nguoi_dung(Base):
     __tablename__ = 'loai_nguoi_dung'
     ma_loai_nguoi_dung = Column(Integer, nullable = False, primary_key = True)
@@ -85,27 +91,36 @@ class Khach_hang(Base):
     def __str__(self):
         return self.ten_khach_hang
 
+    def get_id(self):
+        return self.ma_khach_hang
+    
 class Hoa_don(Base):
     __tablename__ = 'hoa_don'
     ma_hoa_don = Column(Integer, nullable = False, primary_key = True)
     ngay_tao_hoa_don = Column(DateTime, nullable = False)
     ma_khach_hang = Column(Integer, ForeignKey('khach_hang.ma_khach_hang'))
     tong_tien = Column(Float, nullable = False)
+    ma_hoa_don_sendo = Column(String(50))
+    ma_van_don = Column(String(100))
     trang_thai = Column(Integer)
+    ghi_chu = Column(Text)
     khach_hang = relationship(Khach_hang, backref = 'hoa_don')
     def __repr__(self):
         return "<Ma_hoa_don = %d>" % self.ma_hoa_don
+
+    def get_id(self):
+        return self.ma_hoa_don
 
 class Don_hang(Base):
     __tablename__ = 'don_hang'
     id = Column(Integer, nullable =False, primary_key = True)
     ma_hoa_don = Column(Integer, ForeignKey('hoa_don.ma_hoa_don'))
-    ma_san_pham = Column(Integer, ForeignKey('san_pham.ma_san_pham'))
+    ma_san_pham = Column(Integer)
     ten_san_pham = Column(String(100), nullable = False)
     so_luong = Column(Integer, nullable = False)
-    don_gia = Column(Integer, ForeignKey('san_pham.gia_ban'))
+    don_gia = Column(Integer)
+    ghi_chu = Column(Text)
     hoa_don = relationship(Hoa_don, backref = 'don_hang', foreign_keys=[ma_hoa_don])
-    san_pham = relationship(San_pham, backref = 'don_hang', foreign_keys=[ma_san_pham])
     
     def __repr__(self):
         return "<Ma_hoa_don = %d>" % self.ma_hoa_don

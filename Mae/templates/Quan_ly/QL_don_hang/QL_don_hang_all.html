@@ -15,10 +15,10 @@
               </tr>
             </thead>
             <tbody>
-            {%for item in ds_chi_tiet_order%}
+            {%for item in hoa_don%}
               <tr>
                 
-                <td><a href="{{url_for('chi_tiet_order', hd_id = item['salesOrder']['orderNumber'])}}">{{item['salesOrder']['orderNumber']}}</a></td>
+                <td><a href="{{url_for('chi_tiet_order', hd_id = item['salesOrder']['orderNumber'])}}">{{hoa_don.ma_hoa_don_sendo}}</a></td>
                 
 
                 <td>{{item['salesOrder']['orderDate']}}</td>
