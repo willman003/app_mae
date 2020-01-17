@@ -1,82 +1,114 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.3.0/paper.css">
 
     <title>Hoá đơn {{hd_id}}</title>
-  </head>
-  <body>
-    <div class="container" style="margin: 0 0; padding: 10px 5px; width: 148mm; height: 210mm; border: 2px solid black;">
-        <div class="row">
-            <div class="col-md-4">
-                <img src="{{url_for('static', filename = 'images/logo.png')}}" style="position: relative; left: 10mm; padding-bottom: 5px; border-bottom: 1px dashed black;" width="100%">
-                
-                <span style="position: relative; left: 10mm;"><b>MAE COSMETICS</b></span>
-                
+    <style>
+        @media print {
+            @page {size: A5 }
+            .btn {
+                display: none;
+            }
+        }
+    </style>
+
+    <script>
+        function myFunction() {
+            window.print();
+        }
+    </script>
+</head>
+
+<body class="A5" style="background-color: white;">
+    <div class="container-fluid" style="margin: 10mm 5mm; padding: 20px 20px; width: 5.8in; height: 8.3in; border: 1px solid black;">
+        <div class="row text-center">
+            <div class="col-4" style="margin-top: 5mm;">
+                <img src="{{url_for('static', filename = 'images/logo.png')}}" style="position: relative; left: 5mm;"
+                    width="100%">
+
+                <p style="font-size:larger;margin-top: 5px; border: 0.5px solid black;"><b>{{chi_tiet_order['carrierName']}}</b></p>
             </div>
-            <div class="col-md-8 text-center" style="font-size: large; margin-top:5mm;">
-                Mã vận đơn: <b>{{chi_tiet_order['trackingNumber']}}</b>
+            <div class="col-8 text-center" style="font-size: large; margin-top:4mm;">
+                Mã vận đơn: <b>{{chi_tiet_order['trackingNumber']}}</b> <br>
+                <div style="border-top: 1px dashed black;"></div>
+                Mã đơn hàng: <b>{{chi_tiet_order['orderNumber']}}</b>
+                
             </div>
         </div>
-        <div style="border-bottom: 1px solid black;"></div>
+        <div style="border-bottom: 1px solid black; margin-top: 5px;"></div>
         <div class="row" style="font-size: 12pt;">
-            <div class="col-md-12">
+            <div class="col-12">
                 Từ: <b>Mae Cosmetics - 0906.813.557</b>
                 <p>21 đường DD8, Phường Tân Hưng Thuận, Quận 12, Hồ Chí Minh</p>
             </div>
         </div>
         <div style="border-bottom: 1px dashed black;"></div>
         <div class="row" style="font-size: 12pt;">
-            <div class="col-md-12">
-                Đến: <b>{{chi_tiet_order['receiverName']}} - {{chi_tiet_order['shippingContactPhone']}}</b>
+            <div class="col-12">
+                Đến: <b>{{chi_tiet_order['receiverName']|title}} - {{chi_tiet_order['shippingContactPhone']}}</b>
                 <p>{{chi_tiet_order['regionName']}}</p>
             </div>
         </div>
         <div style="border-bottom: 1px dashed black;"></div>
         <div class="row" style="font-size: 12pt;">
-            <div class="col-md-12">
+            <div class="col-12">
                 <b>Tổng sản phẩm: {{don_hang|length}}</b>
             </div>
             {%for item in don_hang%}
-            <div class="col-md-12">
-                {{loop.index}} - {{item['productName']|title}} - SL:{{item['quantity']}} 
+            <div class="col-12">
+                {{loop.index}} - {{item['productName']|title}} - SL:{{item['quantity']}}
             </div>
-            
+
             {%endfor%}
         </div>
         <div style="border-bottom: 1px dashed black;"></div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-12">
                 <b>Ghi chú </b>: {{chi_tiet_order['note']}}
             </div>
         </div>
         <div style="border-bottom: 1px dashed black;"></div>
         <div class="row" style="padding-top: 10px;">
-            <div class="col-md-6 text-center">
+            <div class="col-6 text-center">
                 <b>TIỀN THU NGƯỜI NHẬN</b>
                 <p>{{"{:,}".format(tong_tien)}} VND</p>
             </div>
-            <div class="col-md-5 text-center" style="height: 50mm; border: 1px solid grey;">
+            <div class="col-5 text-center" style="height: 50mm; border: 1px solid grey;">
                 Nhân viên lấy hàng
                 <p><small>Kí và ghi rõ họ tên</small></p>
             </div>
         </div>
-        
 
+        <div class="row" style="margin-top: 20px ;">
+            <div class="col-12 text-center">
+                <button type="button" onclick="myFunction()" class="btn btn-outline-dark">In hoá đơn</button>
+            </div>
+        </div>
 
 
     </div>
-    
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-  </body>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+</body>
+
 </html>

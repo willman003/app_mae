@@ -2,7 +2,7 @@ from Mae import app
 
 from datetime import datetime
 
-from flask import Flask, render_template, redirect, url_for, request, session, flash
+from flask import Flask, render_template, redirect, url_for, request, session, flash, Markup
 
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -13,7 +13,7 @@ from flask_login import current_user, login_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from sqlalchemy.orm import sessionmaker, configure_mappers
-from sqlalchemy import exc,asc,desc
+from sqlalchemy import exc,asc,desc, and_, or_
 from flask_sqlalchemy import Pagination
 
 from flask_sqlalchemy import BaseQuery
@@ -75,10 +75,10 @@ def ql_don_hang():
     dia_chi = ''
     if request.form.get('Th_hoa_don'):
         dieu_khien = request.form.get('Th_hoa_don')
-        if dieu_khien == 'ChoLayHang':
-            dia_chi = url_for('ql_don_hang_waiting')
-        elif dieu_khien == 'DangVanChuyen':
-            dia_chi = url_for('ql_don_hang_dang_van_chuyen')
+        if dieu_khien == 'ChuaInHD':
+            dia_chi = url_for('ql_don_hang_chua_in')
+        elif dieu_khien == 'DaInHD':
+            dia_chi = url_for('ql_don_hang_da_in')
         elif dieu_khien == 'Huy':
             dia_chi = url_for('ql_don_hang_huy')
         elif dieu_khien == 'TheoMaHD':
@@ -86,70 +86,43 @@ def ql_don_hang():
         
     return render_template('Quan_ly/MH_QL_don_hang.html', dia_chi = dia_chi)
 
-@app.route("/QL-don-hang/cho-lay-hang", methods = ['GET','POST'])
-def ql_don_hang_waiting():
-    hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_van_don == None).all()
+@app.route("/QL-don-hang/chua-in", methods = ['GET','POST'])
+def ql_don_hang_chua_in():
+    hoa_don = dbSession.query(Hoa_don).join(Khach_hang).filter(and_(Hoa_don.da_in_hd == 0, or_(Hoa_don.trang_thai == 2,Hoa_don.trang_thai == 3,Hoa_don.trang_thai == 6) )).all()
+    
     
     return render_template('Quan_ly/QL_don_hang/QL_don_hang_all.html', hoa_don = hoa_don)
 
-@app.route("/QL-don-hang/dang-van-chuyen", methods = ['GET','POST'])
-def ql_don_hang_dang_van_chuyen():
-    danh_sach_order = Lay_danh_sach_order()
-    ds_order_moi = []
-    for item in danh_sach_order:
-        order = item['salesOrder']
-        
-        if order['orderStatus'] == 6:
-            ds_order_moi.append(item)
-    
-    ds_chi_tiet_order = []
-    for item in ds_order_moi:
-        order = item['salesOrder']
-        chi_tiet_order = Lay_thong_tin_chi_tiet_order(order['orderNumber'])
-        dict_temp = {}
-        dict_temp['salesOrder'] = order
-        dict_temp['salesOrder_info_detail'] = chi_tiet_order['salesOrder']
-        dict_temp['salesOrderDetails'] = chi_tiet_order['salesOrderDetails']
-        ds_chi_tiet_order.append(dict_temp)
-    return render_template('/Quan_ly/QL_don_hang/QL_don_hang_all.html', ds_chi_tiet_order = ds_chi_tiet_order)
+@app.route("/QL-don-hang/da-in", methods = ['GET','POST'])
+def ql_don_hang_da_in():
+    hoa_don = dbSession.query(Hoa_don).join(Khach_hang).filter(and_(Hoa_don.da_in_hd == 1,or_(Hoa_don.trang_thai == 2,Hoa_don.trang_thai == 3,Hoa_don.trang_thai == 6))).all()
+    return render_template('Quan_ly/QL_don_hang/QL_don_hang_all.html', hoa_don = hoa_don)
 
 @app.route("/QL-don-hang/huy", methods = ['GET','POST'])
 def ql_don_hang_huy():
-    danh_sach_order = Lay_danh_sach_order()
-    ds_order_moi = []
-    for item in danh_sach_order:
-        order = item['salesOrder']
-        if order['orderStatus'] == 13:
-            ds_order_moi.append(item)
-    ds_chi_tiet_order = []
-    for item in ds_order_moi:
-        order = item['salesOrder']
-        chi_tiet_order = Lay_thong_tin_chi_tiet_order(order['orderNumber'])
-        dict_temp = {}
-        dict_temp['salesOrder'] = order
-        dict_temp['salesOrder_info_detail'] = chi_tiet_order['salesOrder']
-        dict_temp['salesOrderDetails'] = chi_tiet_order['salesOrderDetails']
-        ds_chi_tiet_order.append(dict_temp)
-    return render_template('/Quan_ly/QL_don_hang/QL_don_hang_all.html', ds_chi_tiet_order = ds_chi_tiet_order)
+    hoa_don = dbSession.query(Hoa_don).join(Khach_hang).filter(Hoa_don.trang_thai == 13).all()
+    return render_template('/Quan_ly/QL_don_hang/QL_don_hang_all.html', hoa_don = hoa_don)
 
 @app.route("/QL-don-hang/theo-ma-hd", methods = ['GET','POST'])
 def ql_don_hang_theo_ma():
     form = Form_QL_don_hang()
-    chi_tiet_order = None
+    hoa_don = None
     tieu_de = ''
     trang_thai ={2:"Mới",6:"Đang vận chuyển",13:"Huỷ"}
     if form.validate_on_submit():
-        chi_tiet_order = Lay_thong_tin_chi_tiet_order(str(form.ma_hoa_don_tim_kiem.data))
-        if chi_tiet_order.get('salesOrder'):
-            tieu_de = 'Đơn hàng ' + chi_tiet_order['salesOrder']['orderNumber']
+        hoa_don = dbSession.query(Hoa_don).join(Khach_hang).filter(Hoa_don.ma_hoa_don_sendo == str(form.ma_hoa_don_tim_kiem.data)).first()
+        if hoa_don == None:
+            tieu_de = 'Không tìm thấy mã hoá đơn ' + str(form.ma_hoa_don_tim_kiem.data)
         else:
-            chi_tiet_order = None
-            tieu_de = 'Không tìm thấy mã hoá đơn!'
-    return render_template('/Quan_ly/QL_don_hang/QL_don_hang_theo_ma_hd.html', trang_thai = trang_thai, tieu_de = tieu_de, form = form, chi_tiet_order = chi_tiet_order)
+            tieu_de = 'Đơn hàng ' + hoa_don.ma_hoa_don_sendo
 
-@app.route('/QL-don-hang/hd_<int:hd_id>', methods =['GET','POST'])
+            
+    return render_template('Quan_ly/QL_don_hang/QL_don_hang_theo_ma_hd.html', trang_thai = trang_thai, tieu_de = tieu_de, form = form, hoa_don = hoa_don)
+
+
+@app.route('/QL-don-hang/hd_<string:hd_id>', methods =['GET','POST'])
 def chi_tiet_order(hd_id):
-    order = Lay_thong_tin_chi_tiet_order(str(hd_id))
+    order = Lay_thong_tin_chi_tiet_order(hd_id)
     
     chi_tiet_order = order['salesOrder']
     don_hang = order['salesOrderDetails']
@@ -157,12 +130,14 @@ def chi_tiet_order(hd_id):
     for item in don_hang:
         tong_tien += item['subTotal']
     tong_tien += chi_tiet_order['shippingFee']
+    hoa_don = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don_sendo == hd_id).first()
+    trang_thai_1 = {0:"Chưa in hoá đơn",1:"Đã in hoá đơn"}
+    trang_thai_2 = {0:"Chưa cập nhật kho",1:"Đã cập nhật kho"}
+    return render_template("Quan_ly/QL_don_hang/QL_don_hang_chi_tiet.html", trang_thai_2 = trang_thai_2, trang_thai_1 = trang_thai_1, hoa_don = hoa_don, tong_tien = tong_tien, chi_tiet_order = chi_tiet_order, don_hang = don_hang)
 
-    return render_template("Quan_ly/QL_don_hang/QL_don_hang_chi_tiet.html", tong_tien = tong_tien, chi_tiet_order = chi_tiet_order, don_hang = don_hang)
-
-@app.route("/Ql-don-hang/in-hoa-don/hd_<int:hd_id>", methods =['GET','POST'])
+@app.route("/Ql-don-hang/in-hoa-don/hd_<string:hd_id>", methods =['GET','POST'])
 def in_hoa_don(hd_id):
-    order = Lay_thong_tin_chi_tiet_order(str(hd_id))
+    order = Lay_thong_tin_chi_tiet_order(hd_id)
     
     chi_tiet_order = order['salesOrder']
     don_hang = order['salesOrderDetails']
@@ -170,6 +145,7 @@ def in_hoa_don(hd_id):
     for item in don_hang:
         tong_tien += item['subTotal']
     tong_tien += chi_tiet_order['shippingFee']
+    
     return render_template('Quan_ly/QL_don_hang/Hoa_don.html', chi_tiet_order = chi_tiet_order, don_hang = don_hang, tong_tien = tong_tien)
 
 @app.route('/QL-kho', methods = ['GET','POST'])
@@ -183,6 +159,22 @@ def ql_kho():
             dia_chi = url_for('ql_so_luong_ton')
 
     return render_template('Quan_ly/QL_kho_hang/MH_QL_kho_hang.html', dia_chi = dia_chi)
+
+@app.route('/QL-kho/cap-nhat-kho-hang/hd_<string:hd_id>', methods =['GET','POST'])
+def ql_kho_xuat_hang(hd_id):
+    order = Lay_thong_tin_chi_tiet_order(hd_id)
+    don_hang = order['salesOrderDetails']
+    hd = dbSession.query(Hoa_don).filter(Hoa_don.ma_hoa_don_sendo == hd_id).first()
+    for item in don_hang:
+        sp = dbSession.query(San_pham).filter(San_pham.id_sendo == item['productVariantId']).first()
+        sp.so_luong_ton -= item['quantity']
+        
+        dbSession.add(sp)
+        dbSession.commit()
+    hd.da_cap_nhat_kho = 1
+    dbSession.add(hd)
+    dbSession.commit()
+    return redirect(url_for('chi_tiet_order', hd_id = hd_id))
 
 @app.route('/QL-kho/nhap-hang', methods = ['GET','POST'])
 def ql_kho_nhap_hang():

@@ -19,7 +19,7 @@
             <h3>{{tieu_de}}</h3>
         </div>
     </div>
-    {%if chi_tiet_order != None%}
+    {%if hoa_don != None%}
     <div class="row">
         <table class="table" style="margin: 40px auto;">
             <thead class="thead-dark">
@@ -35,11 +35,13 @@
             </thead>
             <tbody>
                 <tr>
-                    <th scope="row"><a href="{{url_for('chi_tiet_order', hd_id = chi_tiet_order['salesOrder']['orderNumber'])}}">{{chi_tiet_order['salesOrder']['orderNumber']}}</a></th>
-                    <td>{{chi_tiet_order['salesOrder']['orderDate']}}</td>
-                    <td>{{chi_tiet_order['salesOrder']['totalAmount']}}</td>
-                    <td>{{chi_tiet_order['salesOrder']['regionName']}}</td>
-                    <td>{{trang_thai[chi_tiet_order['salesOrder']['orderStatus']]}} <p><small>Ngày cập nhật: {{chi_tiet_order['salesOrder']['orderStatusDate']}}</small></p></td>
+                    <td scope="row">
+                        <a href="{{url_for('chi_tiet_order', hd_id = hoa_don.ma_hoa_don_sendo)}}">{{hoa_don.ma_hoa_don_sendo}}</a>
+                    </td>
+                    <td>{{hoa_don.ngay_tao_hoa_don.strftime("%d-%m-%Y %H:%M")}}</td>
+                    <td>{{"{:,}".format(hoa_don.tong_tien)}}</td>
+                    <td>{{hoa_don.khach_hang}}</td>
+                    <td>{{trang_thai[hoa_don.trang_thai]}}</td>
                     
 
                 </tr>

@@ -9,6 +9,7 @@ from flask_sqlalchemy import Pagination
 from flask_sqlalchemy import BaseQuery
 
 from Mae.xu_ly.xu_ly_model import *
+# from xu_ly_model import *
 
 
 configure_mappers()
@@ -108,12 +109,16 @@ def tao_hoa_don_moi(order_number):
     khach_hang_cu = dbSession.query(Khach_hang).filter(Khach_hang.ten_khach_hang == order['salesOrder']['receiverName'].lower()).first()
     if khach_hang_cu == None:
         hoa_don.ma_khach_hang = tao_khach_hang_moi(order)
-    hoa_don.ma_khach_hang = khach_hang_cu.ma_khach_hang
+    else:
+        hoa_don.ma_khach_hang = khach_hang_cu.ma_khach_hang
     hoa_don.tong_tien = order['salesOrder']['totalAmount']
     hoa_don.ma_hoa_don_sendo = order['salesOrder']['orderNumber']
     hoa_don.ma_van_don = order['salesOrder']['trackingNumber']
     hoa_don.trang_thai = order['salesOrder']['orderStatus']
+    hoa_don.nha_van_chuyen = order['salesOrder']['carrierName']
     hoa_don.ghi_chu = order['salesOrder']['note']
+    hoa_don.da_in_hd = 0
+    hoa_don.da_cap_nhat_kho = 0
     dbSession.add(hoa_don)
     dbSession.commit()
     #Create order_detail
@@ -130,11 +135,12 @@ def cap_nhat_hoa_don_database(chi_tiet_order):
         tao_hoa_don_moi(order['orderNumber'])
     else:
         hoa_don.trang_thai = order['orderStatus']
+        hoa_don.nha_van_chuyen = order['carrierName']
+        hoa_don.ma_van_don = order['trackingNumber']
+        if order['orderStatus'] == 13:
+            hoa_don.ghi_chu = '[HUỶ] ' + order['reasonCancel']
         dbSession.add(hoa_don)
         dbSession.commit()
     return  
    
-
-
-
 

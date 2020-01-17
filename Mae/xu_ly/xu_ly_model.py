@@ -89,7 +89,7 @@ class Khach_hang(Base):
     dien_thoai = Column(String(20), nullable = False)
     
     def __str__(self):
-        return self.ten_khach_hang
+        return self.dia_chi
 
     def get_id(self):
         return self.ma_khach_hang
@@ -101,9 +101,13 @@ class Hoa_don(Base):
     ma_khach_hang = Column(Integer, ForeignKey('khach_hang.ma_khach_hang'))
     tong_tien = Column(Float, nullable = False)
     ma_hoa_don_sendo = Column(String(50))
+    nha_van_chuyen = Column(String(255))
     ma_van_don = Column(String(100))
     trang_thai = Column(Integer)
     ghi_chu = Column(Text)
+    da_in_hd = Column(Integer, default = 0)
+    da_cap_nhat_kho = Column(Integer, default = 0)
+    
     khach_hang = relationship(Khach_hang, backref = 'hoa_don')
     def __repr__(self):
         return "<Ma_hoa_don = %d>" % self.ma_hoa_don

@@ -8,7 +8,7 @@
                 <th scope="col">Mã đơn hàng</th>
                 <th scope="col">Lúc</th>
                 <th scope="col">Đến</th>
-                <th scope="col">Hình thức vận chuyển</th>
+                <th scope="col">Nhà vận chuyển</th>
                 <th scope="col">Tổng tiền</th>
                 <th scope="col"></th>
 
@@ -18,16 +18,20 @@
             {%for item in hoa_don%}
               <tr>
                 
-                <td><a href="{{url_for('chi_tiet_order', hd_id = item['salesOrder']['orderNumber'])}}">{{hoa_don.ma_hoa_don_sendo}}</a></td>
+                <td>
+                  <a href="{{url_for('chi_tiet_order', hd_id = item.ma_hoa_don_sendo)}}">{{item.ma_hoa_don_sendo}}
+                     {%if item.da_cap_nhat_kho == 0%}
+                    <br><span style="color:red;"><small>[Chưa cập nhật kho]</small></span>
+                      {%endif%}
+                  </a>
+                </td>
                 
 
-                <td>{{item['salesOrder']['orderDate']}}</td>
-                <td>{{item['salesOrder']['receiverFullAddress']}}</td>
-                <td>{{item['salesOrder_info_detail']['carrierName']}}</td>
-                <td>{{"{:,}".format(item['salesOrder']['totalAmount'])}}</td>
-                {%if item['salesOrder_info_detail']['orderStatus'] == 13%}
-                <td>{{item['salesOrder_info_detail']['reasonCancel']}}</td>
-                {%endif%}
+                <td>{{item.ngay_tao_hoa_don.strftime("%d-%m-%Y %H:%M:%S")}}</td>
+                <td>{{item.khach_hang}}</td>
+                <td>{{item.nha_van_chuyen}}</td>
+                <td>{{"{:,}".format(item.tong_tien)}}</td>
+                
               </tr>
             {%endfor%}
             </tbody>
