@@ -5,7 +5,7 @@
         {{form.hidden_tag()}}
         <div class="form-row">
             <div class="form-group col-md-4">
-                <h3>Tên sản phẩm:</h3>
+                <h4>Tên sản phẩm:</h4>
             </div>
             <div class="form-group col-md-8">
                 <h4><b>{{san_pham.ten_san_pham|title}}</b></h4>
@@ -13,16 +13,24 @@
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
-                Số lượng hiện tại trong kho:
+                Lần cập nhật gần nhất:
             </div>
             <div class="form-group col-md-8">
-                {{san_pham.so_luong_ton}}
+                {%if san_pham.current_edit_price%} {{san_pham.current_edit_price}} {%else%} Không có dữ liệu {%endif%}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                Giá bán hiện tại:
+            </div>
+            <div class="form-group col-md-8">
+                {{"{:,}".format(san_pham.gia_ban)}} VND
             </div>
 
         </div>
         <div class="form-row">
-            <label class="form-group col-md-4" for="so_luong_nhap">Nhập thêm:</label>
-            {{form.so_luong_nhap(class="form-group col-md-8")}}
+            <label class="form-group col-md-4" for="so_luong_nhap">Giá bán mới:</label>
+            {{form.gia_ban(class="form-group col-md-8")}}
         </div>
         {%if chuoi_thong_bao != ''%}
         <div class="form-row text-center">

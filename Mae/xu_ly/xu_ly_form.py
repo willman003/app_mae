@@ -5,7 +5,7 @@ from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import TextField, SubmitField, IntegerField, StringField, PasswordField, SelectField, DateTimeField
 from wtforms import form, fields, validators
-from wtforms.widgets.html5 import NumberInput
+from wtforms.widgets.html5 import NumberInput, DateInput
 
 import flask_login as login
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -86,7 +86,10 @@ class Form_tim_kiem_nhap_hang(FlaskForm):
 
 class Form_nhap_hang(FlaskForm):
     so_luong_nhap = fields.IntegerField(widget=NumberInput())
+    gia_nhap = fields.IntegerField(widget=NumberInput())
     
+class Form_cap_nhat_san_pham(FlaskForm):
+    gia_ban = fields.IntegerField(widget=NumberInput())
 
 class Form_y_kien(FlaskForm):
     ma_khach_hang = fields.IntegerField('Mã khách hàng')
@@ -102,6 +105,19 @@ class Form_huy_don_hang(FlaskForm):
 class Form_lua_chon(FlaskForm):
     lua_chon = fields.SelectField('Trạng thái:',choices=[('0','Chưa thanh toán'),('1','Đã thanh toán'),('2','Huỷ')])
     submit = SubmitField('Xem')
+
+class Form_khoan_chi(FlaskForm):
+    ten = fields.TextField([validators.required()])
+    noi_dung = fields.TextField()
+    so_tien = fields.FloatField([validators.required()])
+    submit_1 = fields.SubmitField('Hoàn tất')
+
+class Form_xem_khoan_chi(FlaskForm):
+    tu_ngay = fields.DateField(widget=DateInput())
+    den_ngay = fields.DateField(widget=DateInput())
+    submit_2 = fields.SubmitField('Xem')
+
+
 
 def init_login():
 	login_manager = login.LoginManager()

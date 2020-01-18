@@ -96,6 +96,7 @@ def tao_don_hang_moi(ma_hd, item):
     don_hang.ten_san_pham = sp.ten_san_pham
     don_hang.so_luong = item['quantity']
     don_hang.don_gia = sp.gia_ban
+    don_hang.loi_nhuan = (sp.gia_ban - sp.gia_nhap)*item['quantity']
     don_hang.ghi_chu = item['description']
     dbSession.add(don_hang)
     dbSession.commit()

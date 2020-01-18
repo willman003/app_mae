@@ -24,6 +24,7 @@
                     <th scope="col">Mã sản phẩm</th>
                     <th scope="col">Tên sản phẩm</th>
                     <th scop="col"></th>
+                    <th scope="col"></th>
                     
                 </tr>
             </thead>
@@ -33,8 +34,8 @@
                     <td>{{item.ma_san_pham}}</td>
                     <td>{{item.ten_san_pham|title}}</td>
                     
-                    <td><small><a href = "/QL-kho/nhap/sp_{{item.ma_san_pham}}"> Nhập hàng</a></small></td>
-
+                    <td><small><a href = "{{url_for('ql_kho_nhap_chi_tiet',ma_sp = item.ma_san_pham)}}"> Nhập hàng</a></small></td>
+                    <td><small><a href = "{{url_for('ql_cap_nhat_sp', ma_sp = item.ma_san_pham)}}">Thay đổi giá bán</a></small></td>
                 </tr>
                 {%endfor%}
             </tbody>

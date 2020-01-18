@@ -1,41 +1,47 @@
 {%extends 'layout/master_manage.html'%}
 {%block content%}
 <div class="container">
-    <div class="row">
-        <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Mã đơn hàng</th>
-                <th scope="col">Lúc</th>
-                <th scope="col">Đến</th>
-                <th scope="col">Nhà vận chuyển</th>
-                <th scope="col">Tổng tiền</th>
-                <th scope="col"></th>
-
-              </tr>
-            </thead>
-            <tbody>
-            {%for item in hoa_don%}
-              <tr>
-                
-                <td>
-                  <a href="{{url_for('chi_tiet_order', hd_id = item.ma_hoa_don_sendo)}}">{{item.ma_hoa_don_sendo}}
-                     {%if item.da_cap_nhat_kho == 0%}
-                    <br><span style="color:red;"><small>[Chưa cập nhật kho]</small></span>
-                      {%endif%}
-                  </a>
-                </td>
-                
-
-                <td>{{item.ngay_tao_hoa_don.strftime("%d-%m-%Y %H:%M:%S")}}</td>
-                <td>{{item.khach_hang}}</td>
-                <td>{{item.nha_van_chuyen}}</td>
-                <td>{{"{:,}".format(item.tong_tien)}}</td>
-                
-              </tr>
-            {%endfor%}
-            </tbody>
-          </table>
+  <div class="row">
+    <div class="col-md-12 text-right">
+      <small>{{chuoi_thong_bao}}</small>
     </div>
+  </div>
+
+  <div class="row">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Mã đơn hàng</th>
+          <th scope="col">Lúc</th>
+          <th scope="col">Đến</th>
+          <th scope="col">Nhà vận chuyển</th>
+          <th scope="col">Tổng tiền</th>
+          <th scope="col"></th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {%for item in hoa_don%}
+        <tr>
+
+          <td>
+            <a href="{{url_for('chi_tiet_order', hd_id = item.ma_hoa_don_sendo)}}">{{item.ma_hoa_don_sendo}}
+              {%if item.da_cap_nhat_kho == 0%}
+              <br><span style="color:red;"><small>[Chưa cập nhật kho]</small></span>
+              {%endif%}
+            </a>
+          </td>
+
+
+          <td>{{item.ngay_tao_hoa_don.strftime("%d-%m-%Y %H:%M:%S")}}</td>
+          <td>{{item.khach_hang}}</td>
+          <td>{{item.nha_van_chuyen}}</td>
+          <td>{{"{:,}".format(item.tong_tien)}}</td>
+
+        </tr>
+        {%endfor%}
+      </tbody>
+    </table>
+  </div>
 </div>
 {%endblock%}

@@ -4,12 +4,27 @@
     <form method="POST">
         {{form.hidden_tag()}}
         <div class="form-row">
-            <div class="form-group col-md-4">
-                <h3>Tên sản phẩm:</h3>
-            </div>
-            <div class="form-group col-md-8">
+            
+            <div class="form-group col-md-12 text-center">
                 <h4><b>{{san_pham.ten_san_pham|title}}</b></h4>
             </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                Ngày nhập hàng gần nhất:
+            </div>
+            <div class="form-group col-md-8">
+                {%if san_pham.current_nhap_hang%} {{san_pham.current_nhap_hang}} {%else%} Không có dữ liệu {%endif%}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+               Giá nhập hiện tại:
+            </div>
+            <div class="form-group col-md-8">
+                {{san_pham.gia_nhap}} VND
+            </div>
+
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
@@ -22,7 +37,11 @@
         </div>
         <div class="form-row">
             <label class="form-group col-md-4" for="so_luong_nhap">Nhập thêm:</label>
-            {{form.so_luong_nhap(class="form-group col-md-8")}}
+            {{form.so_luong_nhap(class="form-group form-control col-md-8")}}
+        </div>
+        <div class="form-row">
+            <label class="form-group col-md-4" for="so_luong_nhap">Giá nhập mới (Ko đổi thì để trống):</label>
+            {{form.gia_nhap(class="form-group form-control col-md-8")}}
         </div>
         {%if chuoi_thong_bao != ''%}
         <div class="form-row text-center">

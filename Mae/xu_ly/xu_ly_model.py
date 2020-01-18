@@ -33,6 +33,8 @@ class San_pham(Base):
     so_luong_ton = Column(Integer, nullable = False, default = 0)
     id_sendo = Column(Integer)
     thuoc_tinh = Column(String(200))
+    current_nhap_hang = Column(String(200))
+    current_edit_price = Column(String(200))
     
     loai_san_pham = relationship(Loai_san_pham, backref='san_pham')
     def __str__(self):
@@ -124,12 +126,24 @@ class Don_hang(Base):
     so_luong = Column(Integer, nullable = False)
     don_gia = Column(Integer)
     ghi_chu = Column(Text)
+    loi_nhuan = Column(Integer)
     hoa_don = relationship(Hoa_don, backref = 'don_hang', foreign_keys=[ma_hoa_don])
     
     def __repr__(self):
         return "<Ma_hoa_don = %d>" % self.ma_hoa_don
 
+class Thu_chi(Base):
+    __tablename__ = 'thu_chi'
+    id = Column(Integer, nullable = False, primary_key = True)
+    ten = Column(String(200), nullable = False)
+    noi_dung = Column(Text)
+    so_tien = Column(Float, nullable = False)
+    thoi_gian = Column(DateTime)
+    loai = Column(Integer)
 
+    def __str__(self):
+        return self.ten
+    
 engine = create_engine('sqlite:///Mae/du_lieu/ql_mae.db?check_same_thread=False')
 Base.metadata.create_all(engine)
 
